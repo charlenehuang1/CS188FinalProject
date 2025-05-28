@@ -20,6 +20,7 @@ class LiftPolicy(object):
             obs (dict): Initial observation from the environment. Must include:
                 - 'cube_pos': The position of the cube to be lifted.
         """
+        pass
 
     def get_action(self, obs):
         """
@@ -35,4 +36,4 @@ class LiftPolicy(object):
                 - action[-1]: Gripper command (1 to close, -1 to open)
         """
 
-        pass
+        return np.array([0, 0, 0, 0, 0, 0, -1])
