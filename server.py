@@ -5,6 +5,8 @@ s = None
 addr = None
 c = None
 
+import struct
+
 def connect():
     global s
     global addr
@@ -19,7 +21,13 @@ def connect():
     print(f'got connection from addr: {addr})')
 
 def send(data):
-    data = pickle.dumps(data)
-    c.send(data)
-    # c.close()
-    # pass
+    # data = pickle.dumps(data)
+    # c.send(data)
+    # # c.close()
+    # # pass
+    try:
+        data = pickle.dumps(data)
+        length = struct.pack('>I', len(data))  # 4-byte length prefix
+        c.sendall(length + data)
+    except BrokenPipeError:
+        print("Connection lost. Unable to send data.")

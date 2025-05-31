@@ -3,6 +3,29 @@ import robosuite as suite
 import socket
 import pickle
 
+
+import struct
+
+def recvall(sock, n):
+    """Helper to receive exactly n bytes from the socket"""
+    data = b''
+    while len(data) < n:
+        packet = sock.recv(n - len(data))
+        if not packet:
+            raise ConnectionError("Socket connection broken")
+        data += packet
+    return data
+
+def receive(sock):
+    """Receive a full pickle-encoded object sent with 4-byte length prefix"""
+    raw_len = recvall(sock, 4)
+    if not raw_len:
+        raise ConnectionError("Failed to receive data length")
+    msg_len = struct.unpack('>I', raw_len)[0]
+    msg = recvall(sock, msg_len)
+    return pickle.loads(msg)
+
+
 class LiftPolicy(object):
     """
     A simple PID-based policy for a robotic arm to lift an object in three phases:
@@ -40,8 +63,16 @@ class LiftPolicy(object):
             np.ndarray: 7D action array for robosuite OSC:
                 - action[-1]: Gripper command (1 to close, -1 to open)
         """
-        data = self.s.recv(1024 * 10)
-        decoded_data = pickle.loads(data)
-        print(decoded_data)
-        # print(hand_landmarks)
-        return np.array([0, 0, 0, 0, 0, 0, 1])
+        # data = self.s.recv(1024 * 100)
+        # decoded_data = pickle.loads(data)
+        # print(decoded_data)
+        # # print(hand_landmarks)
+        # return np.array([0, 0, 0, 0, 0, 0, 1])
+
+        try:
+            decoded_data = receive(self.s)
+            print(decoded_data)
+            return np.array([0, 0, 0, 0, 0, 0, 1])  # Placeholder action
+        except Exception as e:
+            print(f"Error during socket receive: {e}")
+        return np.zeros(7)  # Safe fallback action
