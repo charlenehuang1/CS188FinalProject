@@ -30,9 +30,9 @@ def getGripperState(landmarks):
     index_landmark = landmarks[8]
     thumb_landmark = landmarks[4]
 
-    distance = np.linalg.norm(index_landmark)
+    distance = np.linalg.norm(index_landmark-thumb_landmark)
     print(distance)
-    if distance > 0.7: return 1
+    if distance < 0.1: return 1
     
     return -1
 
@@ -60,8 +60,6 @@ class LiftPolicy(object):
 
         try:
             decoded_data = receive(self.s)
-
-            palm_pos = np.mean(decoded_data, axis=0)
 
             palm_pos = np.mean(decoded_data, axis=0)
 
