@@ -22,10 +22,10 @@ class LiftPolicy(object):
             obs (dict): Initial observation from the environment. Must include:
                 - 'cube_pos': The position of the cube to be lifted.
         """
-        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.s.bind(('localhost', 3000))
-        self.s.listen(1)
-        conn, addr = s.accept()
+        self.s = socket.socket()
+        self.host = socket.gethostname()
+        self.port = 3000
+        self.s.connect((self.host, self.port))
         
     def get_action(self, obs):
         """
@@ -40,8 +40,8 @@ class LiftPolicy(object):
             np.ndarray: 7D action array for robosuite OSC:
                 - action[-1]: Gripper command (1 to close, -1 to open)
         """
-        data = conn.recv(1024)
-        obj = pickle.loads(data)
-        print("Recieved: ", obj)
+        data = self.s.recv(1024 * 10)
+        decoded_data = pickle.loads(data)
+        print(decoded_data)
         # print(hand_landmarks)
         return np.array([0, 0, 0, 0, 0, 0, 1])
