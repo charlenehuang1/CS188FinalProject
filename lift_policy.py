@@ -5,6 +5,38 @@ import pickle
 from pid import PID
 
 
+from filterpy.kalman import KalmanFilter
+
+def create_kalman_filter():
+    kf = KalmanFilter(dim_x=6, dim_z=3)  # state: [x, y, z, vx, vy, vz], measurement: [x, y, z]
+
+    dt = 0.01  # Time step (should match your camera or PID rate)
+
+    # State transition matrix (F)
+    kf.F = np.array([
+        [1, 0, 0, dt, 0,  0],
+        [0, 1, 0, 0,  dt, 0],
+        [0, 0, 1, 0,  0,  dt],
+        [0, 0, 0, 1,  0,  0],
+        [0, 0, 0, 0,  1,  0],
+        [0, 0, 0, 0,  0,  1],
+    ])
+
+    # Measurement function (H)
+    kf.H = np.array([
+        [1, 0, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0, 0],
+        [0, 0, 1, 0, 0, 0],
+    ])
+
+    # Covariance matrices
+    kf.P *= 10.0   # Initial uncertainty
+    kf.R *= 0.01   # Measurement noise
+    kf.Q *= 0.001  # Process noise
+
+    return kf
+
+
 import struct
 
 def recvall(sock, n):
@@ -54,6 +86,8 @@ class LiftPolicy(object):
 
         self.scale = np.array([6, 1, 4])  # Scaling factor between hand movement and robot motion
 
+        self.kf = create_kalman_filter()
+
 
     def get_action(self, obs):
         robot_eef_pos = obs['robot0_eef_pos']
@@ -62,6 +96,15 @@ class LiftPolicy(object):
             decoded_data = receive(self.s)
 
             palm_pos = np.mean(decoded_data, axis=0)
+
+            if not self.calibrated:
+                self.kf.x[:3] = palm_pos.reshape(3, 1)
+                self.kf.x[3:] = 0  # assume zero velocity initially
+            else:
+                self.kf.predict()
+                self.kf.update(palm_pos)
+                filtered_palm_pos = self.kf.x[:3].flatten()
+                delta_hand_pos = self.hand_origin - filtered_palm_pos
 
             # Initialize the reference hand position after a short delay
             if not self.calibrated:
