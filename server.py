@@ -16,7 +16,7 @@ def connect():
     port = 3000
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.bind((host, port))
-    s.listen(1)
+    s.listen(4)
     c, addr = s.accept()
     print(f'got connection from addr: {addr})')
 

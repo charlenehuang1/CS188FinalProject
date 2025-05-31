@@ -7,8 +7,8 @@ from server import send, connect
 
 cap = cv2.VideoCapture(0)
 
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 600)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 400)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
 mp_drawing = mp.solutions.drawing_utils 
 mp_hands = mp.solutions.hands

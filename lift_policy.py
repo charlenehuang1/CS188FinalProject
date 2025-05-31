@@ -43,7 +43,6 @@ class LiftPolicy(object):
         self.host = socket.gethostname()
         self.port = 3000
         self.s.connect((self.host, self.port))
-        
         self.original_robot_pos = obs['robot0_eef_pos'].copy()
         self.pid = PID(kp=10, ki=0, kd=0, target=self.original_robot_pos)
         self.dt = 0.01
@@ -53,20 +52,22 @@ class LiftPolicy(object):
         self.delay = 10
         self.counter = 0
 
-        self.scale = np.array([4.0, 1, 2])  # Scaling factor between hand movement and robot motion
+        self.scale = np.array([6, 1, 4])  # Scaling factor between hand movement and robot motion
+
 
     def get_action(self, obs):
         robot_eef_pos = obs['robot0_eef_pos']
 
         try:
             decoded_data = receive(self.s)
-            wrist_pos = np.array(decoded_data[0], dtype=np.float32)  # [x, y, z] in MediaPipe space
+
+            palm_pos = np.mean(decoded_data, axis=0)
 
             palm_pos = np.mean(decoded_data, axis=0)
 
             # Initialize the reference hand position after a short delay
             if not self.calibrated:
-                if self.counter >= self.delay and np.all(np.abs(wrist_pos) > 0):
+                if self.counter >= self.delay and np.all(np.abs(palm_pos) > 0):
                     self.hand_origin = palm_pos.copy()
                     self.calibrated = True
                     print(f"Calibrated hand origin at: {self.hand_origin}")
@@ -75,12 +76,7 @@ class LiftPolicy(object):
 
             # Compute delta in hand space and scale it to robot space
             delta_hand_pos = self.hand_origin - palm_pos
-            #delta_hand_pos = np.array([delta_hand_pos[1], -delta_hand_pos[0], -delta_hand_pos[2]])  # Flatten Z for now
-            delta_hand_pos = np.array([
-                delta_hand_pos[2],     # Forward/backward
-                delta_hand_pos[0],    # Left/right
-                delta_hand_pos[1],    # Up/down
-            ])
+            delta_hand_pos = np.array([delta_hand_pos[2], delta_hand_pos[0], delta_hand_pos[1]])  # Flatten Z for now
             delta_hand_pos *= self.scale  # Apply scaling
 
             target_pos = self.original_robot_pos + delta_hand_pos
