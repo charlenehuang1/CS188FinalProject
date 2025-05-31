@@ -14,10 +14,11 @@ env = suite.make(
 
 success_rate = 0
 # reset the environment
+obs = env.reset()
+policy = LiftPolicy(obs)
 for _ in range(5):
     obs = env.reset()
-    print(obs)
-    policy = LiftPolicy(obs) 
+    # print(obs)
     while True:
         action = policy.get_action(obs)
         obs, reward, done, info = env.step(action)  # take action in the environment
@@ -25,6 +26,7 @@ for _ in range(5):
         env.render()  # render on display
         if reward == 1.0:
             success_rate += 1
+            
             break
 
 success_rate /= 5.0
