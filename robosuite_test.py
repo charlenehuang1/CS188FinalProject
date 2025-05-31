@@ -9,6 +9,7 @@ env = suite.make(
     has_renderer=True,
     has_offscreen_renderer=False,
     use_camera_obs=False, # change to True maybe???? idk if we need
+    horizon = 9999999999,
 )
 
 success_rate = 0
