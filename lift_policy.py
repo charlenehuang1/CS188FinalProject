@@ -2,6 +2,7 @@ import numpy as np
 import robosuite as suite
 import socket
 import pickle
+from pid import PID
 
 
 import struct
@@ -49,6 +50,14 @@ class LiftPolicy(object):
         self.host = socket.gethostname()
         self.port = 3000
         self.s.connect((self.host, self.port))
+        self.original_robot_pos = obs['robot0_eef_pos']
+        self.pid = PID(kp=10, ki=0, kd=0, target=obs['robot0_eef_pos']) 
+        self.dt = 0.01
+
+        self.delay = 5
+        self.counter = 0
+        
+        self.original_hand_pose = np.array([None, None, None])
         
     def get_action(self, obs):
         """
@@ -63,16 +72,23 @@ class LiftPolicy(object):
             np.ndarray: 7D action array for robosuite OSC:
                 - action[-1]: Gripper command (1 to close, -1 to open)
         """
-        # data = self.s.recv(1024 * 100)
-        # decoded_data = pickle.loads(data)
-        # print(decoded_data)
-        # # print(hand_landmarks)
-        # return np.array([0, 0, 0, 0, 0, 0, 1])
-
+        robot_eef_pos = obs['robot0_eef_pos']
         try:
             decoded_data = receive(self.s)
-            print(decoded_data)
-            return np.array([0, 0, 0, 0, 0, 0, 1])  # Placeholder action
+            wrist_pos = decoded_data[0]
+
+            if not self.original_hand_pose[0]:
+                if wrist_pos[0] != 0 and self.counter >= self.delay: self.original_hand_pose = wrist_pos
+                self.counter += 1
+            delta_hand_pos = self.original_hand_pose - wrist_pos
+            delta_hand_pos = np.array([delta_hand_pos[0], delta_hand_pos[1], 0])
+            print(f'DELTA HAND: {delta_hand_pos}, ORIGINAL ROBOT: {self.original_robot_pos}')
+            target_pos = self.original_robot_pos - delta_hand_pos
+            print(f'EEF: {robot_eef_pos}, TARGET: {target_pos}')
+            self.pid.reset(target=target_pos)
+            delta = self.pid.update(robot_eef_pos, dt=self.dt)
+            # print(f'TARGET: {target_pos}, EEF: {robot_eef_pos}, DELTA: {delta}')
+            return np.array([delta[2], delta[1], 0, 0, 0, 0, 1])  # Placeholder action
         except Exception as e:
             print(f"Error during socket receive: {e}")
         return np.zeros(7)  # Safe fallback action

@@ -16,14 +16,15 @@ hand = mp_hands.Hands()
 
 connect()
 
-while True: 
+while True:
     success, frame = cap.read()
     if success: 
         RGB_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         result = hand.process(RGB_frame)
         if result.multi_hand_landmarks: 
             for hand_landmarks in result.multi_hand_landmarks: 
-                send(hand_landmarks)
+                landmarks_array = np.array([np.array([lm.x, lm.y, lm.z]) for lm in hand_landmarks.landmark])
+                send(landmarks_array)
                 mp_drawing.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
         cv2.imshow("Hand Tracking", frame)
         if cv2.waitKey(1) == ord('q'):
