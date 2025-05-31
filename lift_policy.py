@@ -22,11 +22,20 @@ class LiftPolicy(object):
             obs (dict): Initial observation from the environment. Must include:
                 - 'cube_pos': The position of the cube to be lifted.
         """
+<<<<<<< Updated upstream
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.bind(('localhost', 3000))
         self.s.listen(1)
         conn, addr = s.accept()
         
+=======
+
+        self.cube_pos = obs["cube_pos"]
+        target_position = self.cube_pos
+        
+        pass
+
+>>>>>>> Stashed changes
     def get_action(self, obs):
         """
         Compute the next action for the robot based on current observation.
