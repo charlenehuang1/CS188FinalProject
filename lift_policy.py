@@ -1,5 +1,7 @@
 import numpy as np
 import robosuite as suite
+import socket
+import pickle
 
 class LiftPolicy(object):
     """
@@ -20,8 +22,11 @@ class LiftPolicy(object):
             obs (dict): Initial observation from the environment. Must include:
                 - 'cube_pos': The position of the cube to be lifted.
         """
-        pass
-
+        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.s.bind(('localhost', 3000))
+        self.s.listen(1)
+        conn, addr = s.accept()
+        
     def get_action(self, obs):
         """
         Compute the next action for the robot based on current observation.
@@ -35,5 +40,8 @@ class LiftPolicy(object):
             np.ndarray: 7D action array for robosuite OSC:
                 - action[-1]: Gripper command (1 to close, -1 to open)
         """
-
-        return np.array([0, 0, 0, 0, 0, 0, -1])
+        data = conn.recv(1024)
+        obj = pickle.loads(data)
+        print("Recieved: ", obj)
+        # print(hand_landmarks)
+        return np.array([0, 0, 0, 0, 0, 0, 1])

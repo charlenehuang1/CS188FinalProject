@@ -1,6 +1,8 @@
 import cv2 
 import mediapipe as mp
 import numpy as np
+import socket
+import pickle
 
 cap = cv2.VideoCapture(0)
 
@@ -11,13 +13,23 @@ mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 hand = mp_hands.Hands()
 
+s = socket.socket()
+host = socket.gethostname()
+port = 3000
+
+s.bind((host, port))
+s.listen(1)
+
 while True: 
+    c, addr = s.accept()
+    print(f'connection from {addr}')
     success, frame = cap.read()
     if success: 
         RGB_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         result = hand.process(frame)
         if result.multi_hand_landmarks: 
             for hand_landmarks in result.multi_hand_landmarks: 
+                c.send(pickle.dumps(hand_landmarks))
                 print(hand_landmarks)
                 mp_drawing.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
         cv2.imshow("Hand Tracking", frame)
