@@ -1,11 +1,44 @@
 <!DOCTYPE html>
 <html>
-<body>
 <head>
-
+    <title>CS 188 Final Project</title>
+    <link rel="icon" type="image/x-icon" href="industrial-robot.png">
+    <link rel="stylesheet" href="style.css">
+    
 </head>
+<body>
 
 <h1>Hand Gesture Control in Robosuite for Block Lifting Task</h1>
+<img src="industrial-robot.png", width = 50%, alt = "industrial robot arm">
+<!-- Favicon Link: 
+https://pixabay.com/vectors/industrial-robot-automation-robot-3605115/ 
+-->
+<br>
+<br>
+<a href = "https://github.com/charlenehuang1/CS188FinalProject.git">
+    Click here to see our code
+</a>
+
+<h2>Project Overview</h2>
+<p> Coding policies into Robosuite for the robot to complete a task 
+    can be difficult and time consuming. Our project addresses this 
+    issue by tracking hand gestures and mapping these gestures directly 
+    onto the Panda robot in Robosuite. Specifically, we aim to solve 
+    the block lifting task by using our hand to guide the robot to pick 
+    up the block. To track our hand gestures, we used OpenCV and Python 
+    to map the joints of our hands. We transferred the coordinates of 
+    the hand points through a socket to mjpython and used them to adjust 
+    the robot arm's position in Robosuite. To move the robot arm around, 
+    we can move our hand in all 4 directions--up, down, left, and right. 
+    To close the end effector, we pinch together our index finger and our 
+    thumb; the program will recognize that the distance between these two 
+    points is "small", which will prompt the simulated robot to close its 
+    grip as well. Our project exemplifies a way we can teleoperate a 
+    virtual robot, perhaps for usages such as training for imitation 
+    learning, which potentially eliminates some of the cost limitations 
+    associated with robotics research.
+
+</p>
 
 </body>
 </html>
