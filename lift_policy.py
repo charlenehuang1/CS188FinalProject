@@ -7,7 +7,14 @@ from pid import PID
 
 from filterpy.kalman import KalmanFilter
 
-def create_kalman_filter():
+def create_kalman_filter() -> object:
+    """
+    Helper to build kalman filter for smoothing hand tracking coordinates.
+    
+    Returns:
+        Object: Kalman Filter Object
+    
+    """
     kf = KalmanFilter(dim_x=6, dim_z=3)  # state: [x, y, z, vx, vy, vz], measurement: [x, y, z]
 
     dt = 0.01  # Time step (should match your camera or PID rate)
@@ -39,8 +46,17 @@ def create_kalman_filter():
 
 import struct
 
-def recvall(sock, n):
-    """Helper to receive exactly n bytes from the socket"""
+def recvall(sock: socket, n: int) -> bytes:
+    """
+    Helper to receive exactly n bytes from the socket
+
+    Args:
+        sock (socket): Socket for client
+        n (int): Number of bytes to recieve
+
+    Returns:
+        bytes: byte stream of data recieved from the socket of length n
+    """
     data = b''
     while len(data) < n:
         packet = sock.recv(n - len(data))
@@ -49,8 +65,16 @@ def recvall(sock, n):
         data += packet
     return data
 
-def receive(sock):
-    """Receive a full pickle-encoded object sent with 4-byte length prefix"""
+def receive(sock:socket) -> np.ndarray:
+    """
+    Receive a full pickle-encoded object sent with 4-byte length prefix
+
+    Args:
+        sock (socket): Socket for client
+
+    Returns:
+        np.ndarray: Hand Landmark Array 
+    """
     raw_len = recvall(sock, 4)
     if not raw_len:
         raise ConnectionError("Failed to receive data length")
@@ -58,7 +82,16 @@ def receive(sock):
     msg = recvall(sock, msg_len)
     return pickle.loads(msg)
 
-def getGripperState(landmarks):
+def getGripperState(landmarks: np.ndarray) -> int:
+    """
+        Returns state of gripper being open or closed given the eucliden / L2 distance of Index Finger and Thumb Landmarks
+
+        Args:
+            landmarks (np.ndarray): Hand Landmarks Array
+
+        Returns:
+            int: 1 when L2 distance from index to thumb is less than 0.1, -1 for all other cases
+    """
     index_landmark = landmarks[8]
     thumb_landmark = landmarks[4]
 
@@ -117,7 +150,7 @@ class LiftPolicy(object):
 
             # Compute delta in hand space and scale it to robot space
             delta_hand_pos = self.hand_origin - palm_pos
-            delta_hand_pos = np.array([delta_hand_pos[2], delta_hand_pos[0], delta_hand_pos[1]])  # Flatten Z for now
+            delta_hand_pos = np.array([delta_hand_pos[2], delta_hand_pos[0], delta_hand_pos[1]])
             delta_hand_pos *= self.scale  # Apply scaling
 
             target_pos = self.original_robot_pos + delta_hand_pos
@@ -130,4 +163,4 @@ class LiftPolicy(object):
         
         except Exception as e:
             print(f"[ERROR] During socket receive or processing: {e}")
-            return np.zeros(7)  # Fallback safe action
+            return np.zeros(7)  # Fallback action

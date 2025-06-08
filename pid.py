@@ -1,8 +1,3 @@
-'''
-
-DO NOT MODIFY THIS FILE
-
-'''
 import numpy as np
 
 class PID:
