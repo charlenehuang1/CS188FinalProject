@@ -69,11 +69,11 @@ $ mjpython robosuite_test.py
 
 ### Project Demo
 <video width="640" height="360" controls>
-  <source src="https://github.com/charlenehuang1/CS188FinalProject/blob/main/CS%20188%20Demo%20Video.mp4" type="video/mp4">
+  <source src="https://github.com/charlenehuang1/CS188FinalProject/raw/main/CS%20188%20Demo%20Video.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
 ### 🔗 Links
 - [🌐 Project Website](https://charlenehuang1.github.io/CS188FinalProjectWebsite/)
 - [🛠️ Project Website Source](https://github.com/charlenehuang1/CS188FinalProjectWebsite)
-- [🎬 Watch Our Demo Video](https://drive.google.com/drive/u/1/folders/10m8e-34x17r8tf3unTG74qf54Inl7aL8)
+- [🎬 Watch Our Demo Video](https://drive.google.com/file/d/1G6AGPgdSopS0yZ15LrFnfSstq9DNXww8/view?usp=sharing)
