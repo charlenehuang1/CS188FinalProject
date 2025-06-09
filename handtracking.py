@@ -1,8 +1,6 @@
 import cv2 
 import mediapipe as mp
 import numpy as np
-import socket
-import pickle
 from server import send, connect
 
 cap = cv2.VideoCapture(0)
@@ -29,27 +27,6 @@ while True:
         cv2.imshow("Hand Tracking", frame)
         if cv2.waitKey(1) == ord('q'):
             break
-
-
-def get_hand_orientation(landmarks):
-    wrist = np.array([landmarks[0].x, landmarks[0].y, landmarks[0].z])
-    index_mcp = np.array([landmarks[5].x, landmarks[5].y, landmarks[5].z])
-    pinky_mcp = np.array([landmarks[17].x, landmarks[17].y, landmarks[17].z])
-
-    x_axis = index_mcp - wrist
-    x_axis /= np.linalg.norm(x_axis)
-
-    y_axis = pinky_mcp - wrist
-    y_axis /= np.linalg.norm(y_axis)
-
-    z_axis = np.cross(x_axis, y_axis)
-    z_axis /= np.linalg.norm(z_axis)
-
-    y_axis = np.cross(z_axis, x_axis)  # Re-orthogonalize
-
-    # Create rotation matrix (column-wise)
-    R = np.column_stack((x_axis, y_axis, z_axis))
-    return R  # 3x3 rotation matrix
 
 
 cv2.destroyAllWindows()

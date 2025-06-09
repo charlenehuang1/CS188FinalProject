@@ -3,3 +3,4 @@ opencv-python==4.11.0.86
 mujoco==3.3.0
 robosuite==1.5.1
 mediapipe==0.10.21
+filterpy==1.4.5

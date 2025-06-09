@@ -12,46 +12,57 @@ Our project aims to apply hand tracking to the robot teleoperation task by trans
 > [!NOTE]  
 >Mileage may vary with different package versions. We highly recommended **venv** or **conda** virtual environments. The packages listed below are the versions we used and are not representative of all verions that may work. 
 
-- Python **3.10.13**
-- Mediapipe **0.10.21**
-- Robosuite **1.5.1**
-- Mujoco **3.3.0**
-- OpenCV **4.11.0.86**
-- Numpy **1.26.4**
+| Package    | Version   |
+|------------|-----------|
+| Python     | 3.10.13   |
+| Mediapipe  | 0.10.21   |
+| Robosuite  | 1.5.1     |
+| Mujoco     | 3.3.0     |
+| OpenCV     | 4.11.0.86 |
+| Numpy      | 1.26.4    |
+| FilterPy   | 1.4.5     |
 
 ### 🚀 Running Project
 - **Create a new conda environment**
 ```shell
-conda create -n teleoperate python=3.10.13
+$ conda create -n teleoperate python=3.10.13
 ```
 - **Activate environment**
 ```shell
-conda activate teleoperate
+$ conda activate teleoperate
 ```
 
 - **Clone the Repository**
 ```shell
-git clone https://github.com/charlenehuang1/CS188FinalProject.git
-cd CS188FinalProject
+$ git clone https://github.com/charlenehuang1/CS188FinalProject.git
+$ cd CS188FinalProject
 ```
 
 - **Install Required Packages**
 ```shell
-pip install -r requirements.txt
+$ pip install -r requirements.txt
 ```
 
 - **Begin Hand Tracking**
 ```shell
-python handtracking.py
+$ python handtracking.py
 ```
 
 > [!WARNING]   
 > In order for the socket connection to be established correctly you must wait for the handtracking script to fully initialize opencv and mediapipe. This can be seen by the message **INFO: Created TensorFlow Lite XNNPACK delegate for CPU.** or something similar appearing in the console.
 
 - **Begin Robosuite Simulation**
+
+On **Windows** and **Linux**, run:
 ```shell
-python robosuite_test.py
+$ python robosuite_test.py
 ```
+On **macOS**, due to Mujoco requirements, run:
+```shell
+$ mjpython robosuite_test.py
+```
+
+
 
 > [!WARNING]   
 > The initial position of your hand when this script initalizes is used as a reference to compute displacement from the original position so we highly recommend to place your hand somewhere close to the middle of the camera view as possible to allow for as much movement in x, y, z as possible
