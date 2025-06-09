@@ -16,7 +16,7 @@ success_rate = 0
 # reset the environment
 obs = env.reset()
 policy = LiftPolicy(obs)
-for _ in range(5):
+for _ in range(10):
     obs = env.reset()
     # print(obs)
     while True:
@@ -29,5 +29,5 @@ for _ in range(5):
             
             break
 
-success_rate /= 5.0
+success_rate /= 10.0
 print('success rate:', success_rate)
