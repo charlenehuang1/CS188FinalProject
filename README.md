@@ -67,6 +67,13 @@ $ mjpython robosuite_test.py
 > [!WARNING]   
 > The initial position of your hand when this script initalizes is used as a reference to compute displacement from the original position so we highly recommend to place your hand somewhere close to the middle of the camera view as possible to allow for as much movement in x, y, z as possible
 
+### Project Demo
+<video width="640" height="360" controls>
+  <source src="https://github.com/charlenehuang1/CS188FinalProject/blob/main/CS%20188%20Demo%20Video.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 ### 🔗 Links
 - [🌐 Project Website](https://charlenehuang1.github.io/CS188FinalProjectWebsite/)
 - [🛠️ Project Website Source](https://github.com/charlenehuang1/CS188FinalProjectWebsite)
+- [🎬 Watch Our Demo Video](https://drive.google.com/drive/u/1/folders/10m8e-34x17r8tf3unTG74qf54Inl7aL8)
